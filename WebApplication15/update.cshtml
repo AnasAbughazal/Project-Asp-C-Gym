@@ -1,0 +1,50 @@
+﻿@using WebMatrix.Data
+@{
+
+    var db = Database.Open("admin");
+    var selectAll = db.Query("select * from users");
+    var showData = new WebGrid(source: selectAll);
+
+    if (IsPost)
+    {
+        var name = Request["name"];
+        var phone = Request["phone"];
+        var email = Request["email"];
+        var address = Request["address"];
+        var id = Request["id"];
+
+        var updateCommand = "UPDATE users SET name=@0,email=@1,phone=@2,address=@3 WHERE id=@4";
+        db.Execute(updateCommand, name, phone, email, address, id);
+
+    }
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    @showData.GetHtml(
+            tableStyle: "grid",
+            headerStyle: "head",
+            rowStyle: "alt",
+            alternatingRowStyle: "alt",
+            columns: showData.Columns(
+                      showData.Column("Id"),
+                      showData.Column("Name"),
+                      showData.Column("Email"),
+                      showData.Column("Phone"),
+                      showData.Column("Address")))
+
+    <form method="post" action="">
+        <input name="name" type="text" placeholder="Name" />
+        <input name="phone" type="tel" placeholder="Phone" />
+        <input name="email" type="email" placeholder="Email" />
+        <input name="address" type="text" placeholder="Address" />
+        <input name="id" type="number" placeholder="id" />
+        <input type="submit" value="update" />
+    </form>
+</body>
+</html>
